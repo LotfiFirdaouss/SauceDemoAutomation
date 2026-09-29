@@ -2,15 +2,11 @@ package com.saucedemo.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-/*
-    LoginPage : Knows how to use the login page
+/**
+ * Page object representing the SauceDemo login page.
  */
-public class LoginPage {
+public class LoginPage extends BasePage {
 
     private static final String URL = "https://www.saucedemo.com/";
 
@@ -19,12 +15,8 @@ public class LoginPage {
     private final By loginButton = By.cssSelector("[data-test='login-button']");
     private final By errorMessage = By.cssSelector("[data-test='error']");
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
     }
 
     public void open() {
@@ -32,14 +24,12 @@ public class LoginPage {
     }
 
     public void login(String username, String password) {
-        driver.findElement(usernameInput).sendKeys(username);
-        driver.findElement(passwordInput).sendKeys(password);
-        driver.findElement(loginButton).click();
+        type(usernameInput, username);
+        type(passwordInput, password);
+        click(loginButton);
     }
 
     public String getErrorMessage() {
-        return wait.until(
-                ExpectedConditions.visibilityOfElementLocated(errorMessage)
-        ).getText();
+        return getText(errorMessage);
     }
 }

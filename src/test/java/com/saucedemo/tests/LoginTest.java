@@ -5,8 +5,8 @@ import com.saucedemo.pages.LoginPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/*
-    LoginTest : Decides what behavior to verify
+/**
+ * Verifies successful and unsuccessful login behavior.
  */
 public class LoginTest extends BaseTest{
 

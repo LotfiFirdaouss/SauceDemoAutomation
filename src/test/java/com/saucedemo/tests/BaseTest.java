@@ -2,29 +2,24 @@ package com.saucedemo.tests;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import java.time.Duration;
-
 /**
- * BaseTest : Provides browser setup and cleanup for test classes.
+ * Base class for test classes.
+ * Creates a fresh browser before each test and closes it afterward.
  */
 public abstract class BaseTest {
 
     protected WebDriver driver;
-    protected WebDriverWait wait;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setup() {
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
         driver.manage().window().maximize();
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         if(driver != null) {
             driver.quit();

@@ -1,15 +1,40 @@
-# SauceDemo Selenium Automation
+# SauceDemo UI Test Automation
 
-UI test automation practice project: Java 17, Selenium WebDriver, TestNG,
-Maven, Page Object Model.
+UI test automation project for
+[SauceDemo](https://www.saucedemo.com/) using Java, Selenium WebDriver,
+TestNG, Maven, and the Page Object Model.
 
-**Application under test:** https://www.saucedemo.com/
+The project focuses on a small set of user scenarios and a clean,
+maintainable test structure. It is being developed incrementally, starting
+with direct Selenium tests and refactoring them into reusable page objects.
 
-## Status
+## Current test coverage
 
-Work in progress — project scaffolding and smoke test complete.
+- Successful login with valid credentials
+- Rejected login with an incorrect password
 
-## Run the tests
+## Planned scenarios
 
-```bash
-mvn clean test
+- Add an item to the shopping cart
+- Validate required fields during checkout
+
+## Tech stack
+
+- Java 17
+- Selenium WebDriver
+- TestNG
+- Maven
+- Google Chrome
+- Page Object Model
+
+## Project structure
+
+```text
+src/test/java/com/lotfifirdaouss/saucedemo/
+├── pages/
+│   ├── BasePage.java
+│   ├── LoginPage.java
+│   └── InventoryPage.java
+└── tests/
+    ├── BaseTest.java
+    └── LoginTest.java

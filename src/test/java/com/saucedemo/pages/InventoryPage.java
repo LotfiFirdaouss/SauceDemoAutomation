@@ -2,27 +2,19 @@ package com.saucedemo.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-/*
-    InventoryPage : Knows how to read the products page
+/**
+ * Page object representing the SauceDemo product inventory page.
  */
-public class InventoryPage {
+public class InventoryPage extends BasePage {
 
     private final By pageTitle = By.cssSelector("[data-test='title']");
 
-    private final WebDriverWait wait;
-
     public InventoryPage(WebDriver driver) {
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
     }
 
     public String getPageTitle() {
-        return wait.until(
-                ExpectedConditions.visibilityOfElementLocated(pageTitle)
-        ).getText();
+        return getText(pageTitle);
     }
 }
