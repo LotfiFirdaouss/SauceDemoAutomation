@@ -1,5 +1,6 @@
 package com.saucedemo.tests;
 
+import com.saucedemo.pages.LoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -10,15 +11,10 @@ public class LoginTest extends BaseTest{
 
     @Test
     public void successfulLogin() {
-        // Open the login page
-        driver.get("https://www.saucedemo.com/");
+        LoginPage loginPage = new LoginPage(driver);
 
-        // Enter valid credentials
-        driver.findElement(By.cssSelector("input[data-test='username']")).sendKeys("standard_user");
-        driver.findElement(By.cssSelector("input[data-test='password']")).sendKeys("secret_sauce");
-
-        // Submit the login form
-        driver.findElement(By.cssSelector("input[data-test='login-button']")).click();
+        loginPage.open();
+        loginPage.login("standard_user", "secret_sauce");
 
         // Wait until the Products heading is visible
         WebElement pageTitle = wait.until(
@@ -38,15 +34,10 @@ public class LoginTest extends BaseTest{
 
     @Test
     public void failedLogin() {
-        // Open the login page
-        driver.get("https://www.saucedemo.com/");
+        LoginPage loginPage = new LoginPage(driver);
 
-        // Enter invalid credentials
-        driver.findElement(By.cssSelector("input[data-test='username']")).sendKeys("standard_user");
-        driver.findElement(By.cssSelector("input[data-test='password']")).sendKeys("incorrect_sauce");
-
-        // Submit the login form
-        driver.findElement(By.cssSelector("input[data-test='login-button']")).click();
+        loginPage.open();
+        loginPage.login("standard_user", "invalid_sauce");
 
         // Wait until the Products heading is visible
         WebElement errorMessage = wait.until(
