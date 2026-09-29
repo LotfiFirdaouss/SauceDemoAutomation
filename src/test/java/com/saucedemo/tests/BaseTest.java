@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import java.time.Duration;
 
 /**
- * Provides browser setup and cleanup for test classes.
+ * BaseTest : Provides browser setup and cleanup for test classes.
  */
 public abstract class BaseTest {
 

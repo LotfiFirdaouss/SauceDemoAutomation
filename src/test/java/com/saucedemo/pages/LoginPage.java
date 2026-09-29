@@ -7,6 +7,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+/*
+    LoginPage : Knows how to use the login page
+ */
 public class LoginPage {
 
     private static final String URL = "https://www.saucedemo.com/";
@@ -14,7 +17,7 @@ public class LoginPage {
     private final By usernameInput = By.cssSelector("[data-test='username']");
     private final By passwordInput = By.cssSelector("[data-test='password']");
     private final By loginButton = By.cssSelector("[data-test='login-button']");
-    private final By errorMessage = By.cssSelector("[data-test='error-message']");
+    private final By errorMessage = By.cssSelector("[data-test='error']");
 
     private final WebDriver driver;
     private final WebDriverWait wait;

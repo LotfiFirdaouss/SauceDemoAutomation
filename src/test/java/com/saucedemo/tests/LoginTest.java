@@ -1,31 +1,26 @@
 package com.saucedemo.tests;
 
+import com.saucedemo.pages.InventoryPage;
 import com.saucedemo.pages.LoginPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/*
+    LoginTest : Decides what behavior to verify
+ */
 public class LoginTest extends BaseTest{
 
     @Test
     public void successfulLogin() {
         LoginPage loginPage = new LoginPage(driver);
+        InventoryPage inventoryPage = new InventoryPage(driver);
 
         loginPage.open();
         loginPage.login("standard_user", "secret_sauce");
 
-        // Wait until the Products heading is visible
-        WebElement pageTitle = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector("[data-test='title']"
-                )
-        ));
-
         // Verify that login succeeded
         Assert.assertEquals(
-                pageTitle.getText(),
+                inventoryPage.getPageTitle(),
                 "Products",
                 "The Products page should appear after a successful login."
                 // custom message if the assertion fails
@@ -39,16 +34,9 @@ public class LoginTest extends BaseTest{
         loginPage.open();
         loginPage.login("standard_user", "invalid_sauce");
 
-        // Wait until the Products heading is visible
-        WebElement errorMessage = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector("[data-test='error']"
-                        )
-                ));
-
         // Verify that login succeeded
         Assert.assertEquals(
-                errorMessage.getText(),
+                loginPage.getErrorMessage(),
                 "Epic sadface: Username and password do not match any user in this service",
                 "An error message should appear after a failed login attempt."
         );
