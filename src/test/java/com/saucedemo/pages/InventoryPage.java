@@ -34,4 +34,5 @@ public class InventoryPage extends BasePage {
         click(cartLink);
         return new CartPage(driver);
     }
+
 }

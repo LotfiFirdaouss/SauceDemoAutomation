@@ -1,109 +1,86 @@
 # SauceDemo UI Test Automation
 
-UI test automation project for
-[SauceDemo](https://www.saucedemo.com/) using Java, Selenium WebDriver,
-TestNG, Maven, and the Page Object Model.
+A UI test automation framework for [SauceDemo](https://www.saucedemo.com/) built with Java 17, Selenium WebDriver, TestNG, Maven, and the Page Object Model (POM).
 
-The goal is to automate a focused set of user scenarios while maintaining a
-clear separation between test logic, page interactions, and browser setup.
+The project demonstrates clean test architecture, Data-Driven Testing (DDT), robust explicit waits, and strict separation between test logic, UI interactions, and browser lifecycle.
 
-## Current test coverage
+## Automated Scenarios
 
-- Successful login with valid credentials
-- Rejected login with an incorrect password
-- Add the Sauce Labs Backpack to the cart
-- Verify the cart badge updates correctly
-- Verify the selected product appears in the cart
 
-## Planned test coverage
+| # | Scenario | Class | Type | Verification |
+|---|----------|-------|------|--------------|
+| 1 | Successful login | `LoginTest` | Positive | Valid credentials redirect user to the Products inventory page |
+| 2 | Incorrect password | `LoginTest` | Negative | Error banner is displayed: *"Epic sadface: Username and password do not match..."* |
+| 3 | Add item to cart | `CartTest` | Positive | Cart badge increments to `1` and selected item displays in cart |
+| 4 | Checkout validation: missing First Name | `CheckoutTest` | Negative (DDT) | Form rejects submission: *"Error: First Name is required"* |
+| 5 | Checkout validation: missing Last Name | `CheckoutTest` | Negative (DDT) | Form rejects submission: *"Error: Last Name is required"* |
+| 6 | Checkout validation: missing Postal Code | `CheckoutTest` | Negative (DDT) | Form rejects submission: *"Error: Postal Code is required"* |
 
-- Checkout form validation
 
-## Tech stack
+> **Note:** Scenarios 4–6 are implemented via a single test method using TestNG's `@DataProvider` for parameterised, data-driven validation.
 
-- Java 17
-- Selenium WebDriver
-- TestNG
-- Maven
-- Google Chrome
-- Page Object Model
+## Tech Stack
 
-## Project structure
+- **Language:** Java 17
+- **Browser Automation:** Selenium WebDriver 4
+- **Test Framework:** TestNG
+- **Build Tool:** Maven
+- **Design Pattern:** Page Object Model (POM) + Data-Driven Testing (DDT)
+- **Browser:** Google Chrome
+
+## Project Structure
 
 ```text
-src/test/java/com/lotfifirdaouss/saucedemo/
-├── pages/
-│   ├── BasePage.java
-│   ├── LoginPage.java
-│   ├── InventoryPage.java
-│   └── CartPage.java
-└── tests/
-    ├── BaseTest.java
-    ├── LoginTest.java
-    └── CartTest.java
+src/test/
+├── java/com/saucedemo/
+│   ├── pages/
+│   │   ├── BasePage.java       # Shared driver, explicit waits, reusable UI actions
+│   │   ├── LoginPage.java      # Login locators and actions
+│   │   ├── InventoryPage.java  # Products list and cart badge interactions
+│   │   ├── CartPage.java       # Shopping cart view and checkout entry
+│   │   └── CheckoutPage.java   # Customer information form and error handling
+│   └── tests/
+│       ├── BaseTest.java       # Browser setup/teardown per test method
+│       ├── LoginTest.java      # Scenarios 1 & 2
+│       ├── CartTest.java       # Scenario 3
+│       └── CheckoutTest.java   # Scenarios 4–6 (Data-Driven with @DataProvider)
+└── resources/
+    └── testng.xml              # TestNG suite configuration
 ```
 
-## Class responsibilities
+## Test Design Highlights
 
+- **Page Object Model (POM):** Test methods contain zero locators and zero Selenium API calls. All UI interactions are encapsulated in page objects.
+- **Data-Driven Testing (DDT):** Checkout mandatory fields are verified using a TestNG `@DataProvider`, testing multiple boundary conditions through a single clean test method.
+- **Isolated Execution:** Every test method gets its own fresh browser instance via `@BeforeMethod` and `@AfterMethod`, preventing cross-test pollution (cookies, local storage, cart state).
+- **Explicit Waits:** No flaky `Thread.sleep()`. All element lookups use `WebDriverWait` with `ExpectedConditions` (visibility, clickability).
 
-| Class | Responsibility |
-|---|---|
-| `BaseTest` | Creates a fresh browser before each test and closes it afterward |
-| `BasePage` | Provides shared WebDriver access, explicit waits, and reusable UI actions |
-| `LoginPage` | Contains the login-page locators and login actions |
-| `InventoryPage` | Represents the products page and provides product and cart actions |
-| `CartPage` | Provides access to products displayed in the shopping cart |
-| `LoginTest` | Verifies successful and unsuccessful login behavior |
-| `CartTest` | Verifies that a product can be added to and displayed in the cart |
-
-
-## Test design
-
-Each test receives a new browser session through TestNG's `@BeforeMethod` and
-`@AfterMethod` annotations. This keeps the tests independent and prevents
-browser state from leaking between scenarios.
-
-The project uses the Page Object Model:
-
-- Page classes contain locators and browser interactions.
-- Test classes contain scenarios and assertions.
-- `BasePage` contains reusable Selenium operations and explicit waits.
-- `BaseTest` manages the browser lifecycle.
-
-Tests use explicit waits instead of fixed `Thread.sleep()` delays.
-
-## Run the tests
+## How to Run
 
 ### Prerequisites
-
-- Java 17 or newer
-- Maven
+- Java 17+
+- Maven 3.8+
 - Google Chrome
 
-Run the complete test suite from the project root:
-
+### Run the full suite via Maven
 ```bash
 mvn clean test
 ```
 
-You can also run individual test classes directly from IntelliJ.
-
-Maven test reports are generated under:
-
+### Test Reports
+Surefire HTML and XML reports are automatically generated under:
 ```text
 target/surefire-reports/
 ```
 
 ## Roadmap
 
-- [x] Set up Maven, Selenium, and TestNG
-- [x] Complete the initial browser smoke check
-- [x] Automate successful and unsuccessful login
-- [x] Introduce the Page Object Model
-- [x] Automate adding a product to the cart
-- [ ] Automate checkout form validation
-- [ ] Add a TestNG suite configuration
-- [ ] Capture screenshots when tests fail
-- [ ] Add configurable headless execution
-- [ ] Run tests automatically with GitHub Actions
-- [ ] Upload test reports and failure screenshots as CI artifacts
+- [x] Set up Maven, Selenium 4, and TestNG
+- [x] Initial browser smoke check
+- [x] Automate login scenarios (positive and negative)
+- [x] Build Page Object Model foundation (`BasePage`, `BaseTest`)
+- [x] Automate cart verification
+- [x] Automate checkout form validation using TestNG `@DataProvider`
+- [x] Configure explicit `testng.xml` suite and connect to Surefire
+- [ ] Add configurable headless mode & failure screenshots (Phase 5)
+- [ ] Build GitHub Actions CI pipeline (Phase 6)
