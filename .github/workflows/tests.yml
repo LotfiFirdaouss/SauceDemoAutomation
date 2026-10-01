@@ -1,0 +1,44 @@
+name: Selenium UI Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ui-tests:
+    name: Run TestNG Suite in Headless Chrome
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Verify Chrome version on runner
+        run: google-chrome --version
+
+      - name: Run tests with Maven (Headless)
+        run: mvn --batch-mode clean test -Dheadless=true
+
+      - name: Upload Test Reports and Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-execution-artifacts
+          path: |
+            target/surefire-reports/
+            target/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14

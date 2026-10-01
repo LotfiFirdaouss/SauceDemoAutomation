@@ -1,8 +1,10 @@
 # SauceDemo UI Test Automation
 
+[![Selenium UI Tests](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml/badge.svg)](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml)
+
 A UI test automation framework for [SauceDemo](https://www.saucedemo.com/) built with Java 17, Selenium WebDriver, TestNG, Maven, and the Page Object Model (POM).
 
-The project demonstrates clean test architecture, Data-Driven Testing (DDT), headless execution, automatic failure capture, and strict separation between test logic, UI interactions, and browser lifecycle.
+The project demonstrates clean test architecture, Data-Driven Testing (DDT), headless execution, automatic failure capture, and continuous integration via GitHub Actions.
 
 ## Automated Scenarios
 
@@ -26,11 +28,15 @@ The project demonstrates clean test architecture, Data-Driven Testing (DDT), hea
 - **Test Framework:** TestNG
 - **Build Tool:** Maven
 - **Design Pattern:** Page Object Model (POM) + Data-Driven Testing (DDT)
-- **Browser:** Google Chrome (Headed / Headless)
+- **CI/CD:** GitHub Actions (Ubuntu runner, headless Chrome)
+- **Browser:** Google Chrome (Headed locally / Headless in CI)
 
 ## Project Structure
 
 ```text
+.github/
+└── workflows/
+    └── tests.yml               # GitHub Actions CI pipeline configuration
 src/test/
 ├── java/com/saucedemo/
 │   ├── pages/
@@ -57,7 +63,15 @@ src/test/
 - **Automatic Failure Screenshots:** Any test that fails triggers an automatic screenshot capture via TestNG's `ITestResult` hook, saved to `target/screenshots/`.
 - **Configurable Headless Execution:** Toggle between visible desktop Chrome and CI-ready headless Chrome via Maven property `-Dheadless=true`.
 
-## How to Run
+## Continuous Integration (CI)
+
+Every `push` and `pull_request` to the main branch triggers the GitHub Actions workflow defined in `.github/workflows/tests.yml`:
+1. Provisions a clean Ubuntu Linux container.
+2. Sets up JDK 17 (Eclipse Temurin) with Maven dependency caching.
+3. Executes the full TestNG test suite in headless Chrome.
+4. Archives Surefire HTML reports and failure screenshots as downloadable workflow artifacts (retained for 14 days).
+
+## How to Run Locally
 
 ### Prerequisites
 - Java 17+
@@ -69,7 +83,7 @@ src/test/
 mvn clean test
 ```
 
-### Run headless (faster, CI-compatible)
+### Run headless (CI mode)
 ```bash
 mvn clean test -Dheadless=true
 ```
@@ -88,4 +102,4 @@ mvn clean test -Dheadless=true
 - [x] Automate checkout form validation using TestNG `@DataProvider`
 - [x] Configure explicit `testng.xml` suite and connect to Surefire
 - [x] Add configurable headless mode & failure screenshots
-- [ ] Build GitHub Actions CI pipeline (Phase 6)
+- [x] Build GitHub Actions CI pipeline with artifact archiving
