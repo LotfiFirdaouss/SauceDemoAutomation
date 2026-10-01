@@ -2,7 +2,7 @@
 
 A UI test automation framework for [SauceDemo](https://www.saucedemo.com/) built with Java 17, Selenium WebDriver, TestNG, Maven, and the Page Object Model (POM).
 
-The project demonstrates clean test architecture, Data-Driven Testing (DDT), robust explicit waits, and strict separation between test logic, UI interactions, and browser lifecycle.
+The project demonstrates clean test architecture, Data-Driven Testing (DDT), headless execution, automatic failure capture, and strict separation between test logic, UI interactions, and browser lifecycle.
 
 ## Automated Scenarios
 
@@ -26,7 +26,7 @@ The project demonstrates clean test architecture, Data-Driven Testing (DDT), rob
 - **Test Framework:** TestNG
 - **Build Tool:** Maven
 - **Design Pattern:** Page Object Model (POM) + Data-Driven Testing (DDT)
-- **Browser:** Google Chrome
+- **Browser:** Google Chrome (Headed / Headless)
 
 ## Project Structure
 
@@ -40,7 +40,7 @@ src/test/
 │   │   ├── CartPage.java       # Shopping cart view and checkout entry
 │   │   └── CheckoutPage.java   # Customer information form and error handling
 │   └── tests/
-│       ├── BaseTest.java       # Browser setup/teardown per test method
+│       ├── BaseTest.java       # Browser setup/teardown, headless toggle, failure screenshots
 │       ├── LoginTest.java      # Scenarios 1 & 2
 │       ├── CartTest.java       # Scenario 3
 │       └── CheckoutTest.java   # Scenarios 4–6 (Data-Driven with @DataProvider)
@@ -54,6 +54,8 @@ src/test/
 - **Data-Driven Testing (DDT):** Checkout mandatory fields are verified using a TestNG `@DataProvider`, testing multiple boundary conditions through a single clean test method.
 - **Isolated Execution:** Every test method gets its own fresh browser instance via `@BeforeMethod` and `@AfterMethod`, preventing cross-test pollution (cookies, local storage, cart state).
 - **Explicit Waits:** No flaky `Thread.sleep()`. All element lookups use `WebDriverWait` with `ExpectedConditions` (visibility, clickability).
+- **Automatic Failure Screenshots:** Any test that fails triggers an automatic screenshot capture via TestNG's `ITestResult` hook, saved to `target/screenshots/`.
+- **Configurable Headless Execution:** Toggle between visible desktop Chrome and CI-ready headless Chrome via Maven property `-Dheadless=true`.
 
 ## How to Run
 
@@ -62,16 +64,19 @@ src/test/
 - Maven 3.8+
 - Google Chrome
 
-### Run the full suite via Maven
+### Run with visible browser (default)
 ```bash
 mvn clean test
 ```
 
-### Test Reports
-Surefire HTML and XML reports are automatically generated under:
-```text
-target/surefire-reports/
+### Run headless (faster, CI-compatible)
+```bash
+mvn clean test -Dheadless=true
 ```
+
+### Test Artifacts & Reports
+- **Surefire / TestNG HTML reports:** `target/surefire-reports/`
+- **Failure Screenshots:** `target/screenshots/` (only generated on failure)
 
 ## Roadmap
 
@@ -82,5 +87,5 @@ target/surefire-reports/
 - [x] Automate cart verification
 - [x] Automate checkout form validation using TestNG `@DataProvider`
 - [x] Configure explicit `testng.xml` suite and connect to Surefire
-- [ ] Add configurable headless mode & failure screenshots (Phase 5)
+- [x] Add configurable headless mode & failure screenshots
 - [ ] Build GitHub Actions CI pipeline (Phase 6)
