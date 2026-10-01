@@ -29,7 +29,8 @@ public class CheckoutPage extends BasePage {
         type(firstNameInput, firstName);
         type(lastNameInput, lastName);
         type(postalCodeInput, postalCode);
-        click(continueButton);
+        // Use submit() on the continue button to guarantee the form fires in headless mode
+        driver.findElement(continueButton).submit();
     }
 
     public String getErrorMessage() {

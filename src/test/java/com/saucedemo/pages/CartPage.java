@@ -17,7 +17,10 @@ public class CartPage extends BasePage {
     }
 
     public CheckoutPage openCheckout() {
+        // Wait for the checkout button to be clickable, then click
         click(checkoutButton);
+        // Wait until we actually navigate away from the cart to the checkout page
+        waitForUrlContains("checkout-step-one");
         return new CheckoutPage(driver);
     }
 }

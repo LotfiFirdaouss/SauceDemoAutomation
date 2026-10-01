@@ -28,7 +28,9 @@ public abstract class BasePage {
     protected void type(By locator, String text) {
         WebElement element = waitForVisibility(locator);
         element.clear();
-        element.sendKeys(text);
+        if (text != null && !text.isEmpty()) {
+            element.sendKeys(text);
+        }
     }
 
     protected void click(By locator) {
@@ -54,5 +56,9 @@ public abstract class BasePage {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(locator)
         );
+    }
+
+    protected void waitForUrlContains(String fraction) {
+        wait.until(ExpectedConditions.urlContains(fraction));
     }
 }
