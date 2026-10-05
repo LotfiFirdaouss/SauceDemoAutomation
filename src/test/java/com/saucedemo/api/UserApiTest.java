@@ -1,7 +1,10 @@
 package com.saucedemo.api;
 
+import com.saucedemo.api.models.UserRequest;
+import com.saucedemo.api.models.UserResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -16,7 +19,7 @@ public class UserApiTest {
         RestAssured.baseURI = "https://reqres.in";
     }
 
-    @Test
+    @Test(description = "GET /api/users/2 - Retrieve a single user by ID")
     public void getSingleUser() {
         given()
             // GIVEN : We expect JSON back
@@ -33,5 +36,25 @@ public class UserApiTest {
             .body("data.last_name", equalTo("Weaver"))
             .body("data.email", equalTo("janet.weaver@reqres.in"));
 
+    }
+
+    @Test(description = "POST /api/users - Create a new user using record serialization and deserialization")
+    public void createUserWithRecordSerialization() {
+        UserRequest userRequest = new UserRequest("John Doe", "Software Engineer");
+
+        UserResponse userResponse = given()
+            .contentType(ContentType.JSON)
+            .body(userRequest) // Serialize the record to JSON
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(201)
+            .extract()
+            .as(UserResponse.class); // Deserialize the response to UserResponse record
+
+        Assert.assertEquals(userResponse.name(), "John Doe");
+        Assert.assertEquals(userResponse.job(), "Software Engineer");
+        Assert.assertNotNull(userResponse.id(), "Server should generate a user ID");
+        Assert.assertNotNull(userResponse.createdAt(), "Server should generate a user creation timestamp");
     }
 }
