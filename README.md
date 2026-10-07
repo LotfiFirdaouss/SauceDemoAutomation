@@ -1,13 +1,17 @@
-# SauceDemo UI Test Automation
+# Full-Stack Test Automation Framework (UI + API)
 
-[![Selenium UI Tests](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml/badge.svg)](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml)
+[![Selenium UI & API Tests](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml/badge.svg)](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml)
 
-A UI test automation framework for [SauceDemo](https://www.saucedemo.com/) built with Java 17, Selenium WebDriver, TestNG, Maven, and the Page Object Model (POM).
+A multi-layered test automation framework demonstrating the **Test Automation Pyramid**:
+1. **UI Layer:** End-to-end browser automation for [SauceDemo](https://www.saucedemo.com/) using Java 17, Selenium WebDriver 4, TestNG, and Page Object Model (POM).
+2. **API Layer:** Backend REST API validation for [ReqRes](https://reqres.in/) using REST Assured, Hamcrest matchers, and Java 17 `record` DTOs.
+3. **CI/CD Pipeline:** Fully automated regression suite running headless on Ubuntu runners in GitHub Actions.
 
-The project demonstrates clean test architecture, Data-Driven Testing (DDT), headless execution, automatic failure capture, and continuous integration via GitHub Actions.
+---
 
-## Automated Scenarios
+## Test Architecture & Scenarios (10 Total Tests)
 
+### Layer 1: UI Web Automation (Selenium 4 + POM)
 
 | # | Scenario | Class | Type | Verification |
 |---|----------|-------|------|--------------|
@@ -19,17 +23,31 @@ The project demonstrates clean test architecture, Data-Driven Testing (DDT), hea
 | 6 | Checkout validation: missing Postal Code | `CheckoutTest` | Negative (DDT) | Form rejects submission: *"Error: Postal Code is required"* |
 
 
-> **Note:** Scenarios 4–6 are implemented via a single test method using TestNG's `@DataProvider` for parameterised, data-driven validation.
+> **Note:** Scenarios 4–6 are implemented via a single data-driven test method using TestNG's `@DataProvider`.
+
+### Layer 2: API Automation (REST Assured + Java 17 Records)
+
+| # | Scenario | Endpoint | Method | Key Concepts Demonstrated |
+|---|----------|----------|--------|---------------------------|
+| 7 | Retrieve Single User | `/api/users/2` | `GET` | Centralized Request/Response specifications, status 200, JSONPath assertions |
+| 8 | Create User (DTO) | `/api/users` | `POST` | Java 17 `record` DTO serialization/deserialization, contract validation |
+| 9 | E2E User Lifecycle | `/api/users` | `CRUD` | Stateful chaining: POST ➔ extract dynamic ID ➔ PUT update ➔ DELETE (204) |
+| 10 | Missing Password Validation | `/api/register` | `POST` | Negative boundary test asserting 400 Bad Request and error schema |
+
+
+---
 
 ## Tech Stack
 
 - **Language:** Java 17
-- **Browser Automation:** Selenium WebDriver 4
-- **Test Framework:** TestNG
-- **Build Tool:** Maven
-- **Design Pattern:** Page Object Model (POM) + Data-Driven Testing (DDT)
-- **CI/CD:** GitHub Actions (Ubuntu runner, headless Chrome)
-- **Browser:** Google Chrome (Headed locally / Headless in CI)
+- **UI Automation:** Selenium WebDriver 4, Chrome DevTools
+- **API Automation:** REST Assured 5, Hamcrest, Jackson Databind
+- **Test Framework:** TestNG (Suites, DataProviders, Lifecycle Hooks)
+- **Design Patterns:** Page Object Model (POM), Data-Driven Testing (DDT), DTO Pattern (Java Records)
+- **Build Tool:** Maven 3
+- **CI/CD:** GitHub Actions (Ubuntu runner, headless Chrome, test artifact archiving)
+
+---
 
 ## Project Structure
 
@@ -39,6 +57,12 @@ The project demonstrates clean test architecture, Data-Driven Testing (DDT), hea
     └── tests.yml               # GitHub Actions CI pipeline configuration
 src/test/
 ├── java/com/saucedemo/
+│   ├── api/
+│   │   ├── BaseApiTest.java    # Shared Request/Response specifications
+│   │   ├── UserApiTest.java    # REST Assured test scenarios (CRUD, DTO, negative)
+│   │   └── models/
+│   │       ├── UserRequest.java   # Java 17 record request DTO
+│   │       └── UserResponse.java  # Java 17 record response DTO
 │   ├── pages/
 │   │   ├── BasePage.java       # Shared driver, explicit waits, reusable UI actions
 │   │   ├── LoginPage.java      # Login locators and actions
@@ -47,50 +71,47 @@ src/test/
 │   │   └── CheckoutPage.java   # Customer information form and error handling
 │   └── tests/
 │       ├── BaseTest.java       # Browser setup/teardown, headless toggle, failure screenshots
-│       ├── LoginTest.java      # Scenarios 1 & 2
-│       ├── CartTest.java       # Scenario 3
-│       └── CheckoutTest.java   # Scenarios 4–6 (Data-Driven with @DataProvider)
+│       ├── LoginTest.java      # UI Scenarios 1 & 2
+│       ├── CartTest.java       # UI Scenario 3
+│       └── CheckoutTest.java   # UI Scenarios 4–6 (Data-Driven with @DataProvider)
 └── resources/
-    └── testng.xml              # TestNG suite configuration
+    └── testng.xml              # Multi-suite configuration (UI + API)
 ```
 
-## Test Design Highlights
-
-- **Page Object Model (POM):** Test methods contain zero locators and zero Selenium API calls. All UI interactions are encapsulated in page objects.
-- **Data-Driven Testing (DDT):** Checkout mandatory fields are verified using a TestNG `@DataProvider`, testing multiple boundary conditions through a single clean test method.
-- **Isolated Execution:** Every test method gets its own fresh browser instance via `@BeforeMethod` and `@AfterMethod`, preventing cross-test pollution (cookies, local storage, cart state).
-- **Explicit Waits:** No flaky `Thread.sleep()`. All element lookups use `WebDriverWait` with `ExpectedConditions` (visibility, clickability).
-- **Automatic Failure Screenshots:** Any test that fails triggers an automatic screenshot capture via TestNG's `ITestResult` hook, saved to `target/screenshots/`.
-- **Configurable Headless Execution:** Toggle between visible desktop Chrome and CI-ready headless Chrome via Maven property `-Dheadless=true`.
-
-## Continuous Integration (CI)
-
-Every `push` and `pull_request` to the main branch triggers the GitHub Actions workflow defined in `.github/workflows/tests.yml`:
-1. Provisions a clean Ubuntu Linux container.
-2. Sets up JDK 17 (Eclipse Temurin) with Maven dependency caching.
-3. Executes the full TestNG test suite in headless Chrome.
-4. Archives Surefire HTML reports and failure screenshots as downloadable workflow artifacts (retained for 14 days).
+---
 
 ## How to Run Locally
 
-### Prerequisites
-- Java 17+
-- Maven 3.8+
-- Google Chrome
-
-### Run with visible browser (default)
+### Run All Tests (UI Headed + API)
 ```bash
 mvn clean test
 ```
 
-### Run headless (CI mode)
+### Run All Tests Headless (CI-compatible)
 ```bash
 mvn clean test -Dheadless=true
 ```
 
-### Test Artifacts & Reports
-- **Surefire / TestNG HTML reports:** `target/surefire-reports/`
-- **Failure Screenshots:** `target/screenshots/` (only generated on failure)
+### Run Only API Tests
+```bash
+mvn clean test -Dtest=UserApiTest
+```
+
+### Run Only UI Tests
+```bash
+mvn clean test -Dtest=*Test -Dheadless=true
+```
+
+---
+
+## Continuous Integration (CI)
+
+Every `push` and `pull_request` to `master` triggers the GitHub Actions workflow:
+1. Spawns an Ubuntu Linux environment with Java 17 (Temurin).
+2. Runs all 10 tests (6 UI tests headless + 4 API tests).
+3. Archives Surefire HTML reports and any failure screenshots as downloadable build artifacts (retained for 14 days).
+
+---
 
 ## Roadmap
 
@@ -103,3 +124,4 @@ mvn clean test -Dheadless=true
 - [x] Configure explicit `testng.xml` suite and connect to Surefire
 - [x] Add configurable headless mode & failure screenshots
 - [x] Build GitHub Actions CI pipeline with artifact archiving
+- [x] Integrate REST Assured API test suite with Java 17 records (Phase 7)
