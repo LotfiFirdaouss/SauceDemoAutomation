@@ -1,6 +1,6 @@
 # Full-Stack Test Automation Framework (UI + API)
 
-[![Selenium UI & API Tests](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml/badge.svg)](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml)
+[![Selenium UI & API Tests](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/LotfiFirdaouss/SauceDemoAutomation/actions/workflows/tests.yml)
 
 A multi-layered test automation framework demonstrating the **Test Automation Pyramid**:
 1. **UI Layer:** End-to-end browser automation for [SauceDemo](https://www.saucedemo.com/) using Java 17, Selenium WebDriver 4, TestNG, and Page Object Model (POM).
